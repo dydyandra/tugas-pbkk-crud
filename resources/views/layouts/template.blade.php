@@ -52,7 +52,10 @@
               <a class="nav-link" href="/artikel">Article CRUD</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="/review">Review CRUD (Tugas)</a>
+              <a class="nav-link" href="/review">Review (Tugas)</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/book">Book (Tugas)</a>
             </li>
           </ul>
           <form class="d-flex">

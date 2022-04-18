@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ArtikelController;
 use App\Http\Controllers\ReviewController;
+use App\Http\Controllers\BookController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -38,5 +39,12 @@ Route::group(['prefix' => 'review', 'as' => 'review.'], function(){
     Route::post('/update/{id}', [ReviewController::class, 'update'])->name('update');
     Route::delete('/delete/{id}', [ReviewController::class, 'destroy'])->name('destroy');
     Route::get('/detail/{id}', [ReviewController::class, 'show'])->name('show');
+
+});
+
+
+Route::group(['prefix' => 'book', 'as' => 'book.'], function(){
+    Route::get('/', [BookController::class, 'index'])->name('list-buku');
+    Route::get('/detail/{id}', [BookController::class, 'show'])->name('show');
 
 });
