@@ -78,7 +78,7 @@
 
                     <div>
                         <input class="mt-3 form-control form-control-lg  @error('rating') is-invalid @enderror" name="rating" type="text"
-                               placeholder="Rating" value="{{ $review->rating ? $review->rating : 'Belum ada Rating' }} " autofocus>
+                               placeholder="Rating" value="{{ $review->rating ? $review->rating : null }} " autofocus>
                     </div>
 
                     @error('rating')
