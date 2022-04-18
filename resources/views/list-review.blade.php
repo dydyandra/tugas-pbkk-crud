@@ -72,11 +72,11 @@
         <tr>
             <td>{{ $it }}</td>
             <td>
-                <img src="{{ asset('storage/images/'. $d->photo) }}" alt="" style="height: 100px">
+                <img src="{{ asset('storage/images/'. $d->book->photo) }}" alt="" style="height: 100px">
                 {{-- {{ $d->photo }} --}}
             </td>
-            <td>{{ $d->title }}</td>
-            <td>{{ $d->author }}</td>
+            <td>{{ $d->book->title }}</td>
+            <td>{{ $d->book->author }}</td>
             <td>{{ $d->started }}</td>
             <td>{{ $d->read }}</td>
             <td>{{ $d->rating }}</td>

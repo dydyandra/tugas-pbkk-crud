@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 use App\Models\Review;
+use App\Models\Book;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class ReviewController extends Controller
 {
@@ -22,6 +24,7 @@ class ReviewController extends Controller
             'showRead'=>$read_count,
             'showProgress'=>$progress,
         ]);
+
     }
 
     /**
@@ -67,15 +70,27 @@ class ReviewController extends Controller
         }
 
         // $path = $request->file('photo')->store('public/images');
+        $book= Book::where('title', '=', Str::lower($request->title) )->first();
+        if ($book === null) {
+           // book doesn't exist
+           $book = new Book;
+           $book->title = $request->title;
+           $book->author = $request->author;
+           $book->photo = $fileNameToStore;
+           $book->save();
+        }
 
         $review = new Review;
-        $review->title = $request->title;
-        $review->author = $request->author;
+        // $review->title = $request->title;
+        // $review->author = $request->author;
+        $review->book_id = $book->id;
         $review->started = $request->started;
         $review->read = $request->read;
         $review->rating = $request->rating;
-        $review->photo = $fileNameToStore;
+        // $review->photo = $fileNameToStore;
         $review->save();
+
+
 
         // Artikel::create($validatedData);
         return redirect()->route('review.list-review')->with('tambah_review', 'Penambahan Pengguna berhasil');
@@ -127,14 +142,16 @@ class ReviewController extends Controller
         ]);
 
         $review = Review::findOrFail($id);
+        $book = Book::find($review->book_id);
+
 
         if($request->hasFile('photo')){
             $request->validate([
                 'photo' => 'image',
             ]);
 
-            if ($review->photo != 'noimage.jpg'){
-                Storage::disk('public')->delete('images/'.$review->photo);
+            if ($book->photo != 'noimage.jpg'){
+                Storage::disk('public')->delete('images/'.$book->photo);
             }
             
             $filenameWithExt = $request->file('photo')->getClientOriginalName ();
@@ -146,28 +163,79 @@ class ReviewController extends Controller
             $fileNameToStore = $filename. '_'. time().'.'.$extension;
             // Upload Image
             $path = $request->file('photo')->storeAs('public/images', $fileNameToStore);
-            
-          
-            $review->update([
-                'title' => $request['title'],
-                'author' => $request['author'],
-                'photo' => $fileNameToStore,
-                'started' => $request['started'],
-                'read' => $request['read'],
-                'rating' => $request['rating'],
-            ]);
-            
+
+            if ($request->title != $book->title){
+                // $fileNameToStore = 'noimage.jpg';
+                $findBook= Book::where('title', '=', Str::lower($request->title) )->first();
+                if ($findBook === null) {
+                   // book doesn't exist
+                   $findBook = new Book;
+                   $findBook->title = $request->title;
+                   $findBook->author = $request->author;
+                   $findBook->photo = $fileNameToStore;
+                   $findBook->save();
+                }
+
+                $review->update([
+                    'book_id' =>$findBook->id,
+                    'started' => $request['started'],
+                    'read' => $request['read'],
+                    'rating' => $request['rating'],
+                ]);
+
+            }
+            else{
+                $book->update([
+                    'author' => $request['author'],
+                    'photo' => $fileNameToStore,
+                ]);
+              
+                $review->update([
+                    // 'book_id' => $request['book_id'],
+                    'started' => $request['started'],
+                    'read' => $request['read'],
+                    'rating' => $request['rating'],
+                ]);
+            }
 
         }
     
         else{
-            $review->update([
-                'title' => $request['title'],
-                'author' => $request['author'],
-                'started' => $request['started'],
-                'read' => $request['read'],
-                'rating' => $request['rating'],
-            ]);
+
+            if($request->title != $book->title){
+                $fileNameToStore = 'noimage.jpg';
+                $findBook= Book::where('title', '=', Str::lower($request->title) )->first();
+                if ($findBook === null) {
+                   // book doesn't exist
+                   $findBook = new Book;
+                   $findBook->title = $request->title;
+                   $findBook->author = $request->author;
+                   $findBook->photo = $fileNameToStore;
+                   $findBook->save();
+                }
+
+                $review->update([
+                    'book_id' =>$findBook->id,
+                    'started' => $request['started'],
+                    'read' => $request['read'],
+                    'rating' => $request['rating'],
+                ]);
+
+            }
+            else{
+                $book->update([
+                    'author' => $request['author'],
+                ]);
+    
+                $review->update([
+                    // 'book_id' => $request['book_id'],
+                    'started' => $request['started'],
+                    'read' => $request['read'],
+                    'rating' => $request['rating'],
+                ]);
+
+            }
+            
         }
         
         return redirect()->route('review.list-review')->with('edit_review', 'Pengeditan Data berhasil!');
@@ -182,9 +250,9 @@ class ReviewController extends Controller
     public function destroy($id)
     {
         $review = Review::findOrFail($id);
-        if ($review->photo != 'noimage.jpg'){
-            Storage::disk('public')->delete('images/'.$review->photo);
-        }
+        // if ($review->photo != 'noimage.jpg'){
+        //     Storage::disk('public')->delete('images/'.$review->photo);
+        // }
         $review->delete();
 		return redirect()->route('review.list-review')->with('hapus_review', 'Penghapusan data berhasil');
     }

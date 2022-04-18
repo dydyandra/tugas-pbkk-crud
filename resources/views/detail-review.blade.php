@@ -11,7 +11,7 @@
                     <div class="mt-3">
                         {{-- <label for="photo">Gambar Buku</label> --}}
                         {{-- <input type="file" class="mt-3 form-control form-control-file" id="photo" name="photo"> --}}
-                        <img src="{{ asset('storage/images/' . $review->photo) }}" alt="" style="height: 200px">
+                        <img src="{{ asset('storage/images/' . $review->book->photo) }}" alt="" style="height: 200px">
                     </div>
 
                     @error('photo')
@@ -22,7 +22,7 @@
 
                     <div>
                         <input class="mt-3 form-control form-control-lg" name="title" type="text" placeholder="Title"
-                            value="{{ $review->title ? $review->title : 'Tidak Ada Judul' }}" readonly>
+                            value="{{ $review->book->title ? $review->book->title : 'Tidak Ada Judul' }}" readonly>
                     </div>
 
                     @error('title')
@@ -34,7 +34,7 @@
 
                     <div>
                         <input class="mt-3 form-control form-control-lg" name="author" type="text" placeholder="Author"
-                            value="{{ $review->author ? $review->author : 'Tidak Ada Penulis' }}" readonly>
+                            value="{{ $review->book->author ? $review->book->author : 'Tidak Ada Penulis' }}" readonly>
                     </div>
 
                     @error('author')

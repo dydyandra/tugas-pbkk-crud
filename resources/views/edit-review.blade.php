@@ -5,7 +5,7 @@
     <div class="col-lg-9">
         <div class="card mt-2">
             <div class="card-body text-center top-icon">
-                <h1 class="mt-3">Edit Artikel</h1>
+                <h1 class="mt-3">Edit Review</h1>
                 <br>
                 @if (Session::has('error'))
                     <div class="alert alert-danger">{{ Session::get('error') }}</div>
@@ -20,7 +20,7 @@
 
                     <div>
                         <input class="mt-3 form-control form-control-lg @error('title') is-invalid @enderror" name="title" type="text"
-                               placeholder="Title" value="{{ $review->title ? $review->title : 'Tidak Ada Judul' }}" autofocus required>
+                               placeholder="Title" value="{{ $review->book->title ? $review->book->title : 'Tidak Ada Judul' }}" autofocus required>
                     </div>
 
                     @error('title')
@@ -32,7 +32,7 @@
 
                     <div>
                         <input class="mt-3 form-control form-control-lg  @error('author') is-invalid @enderror " name="author" type="text"
-                               placeholder="Author" value="{{ $review->author ? $review->author : 'Tidak Ada Penulis' }}" autofocus required>
+                               placeholder="Author" value="{{ $review->book->author ? $review->book->author : 'Tidak Ada Penulis' }}" autofocus required>
                     </div>
 
                     @error('author')
@@ -44,7 +44,7 @@
                     <div class="mt-3">
                         {{-- <label for="photo">Gambar Buku</label> --}}
                         <input type="file" class="mt-3 form-control form-control-file  @error('photo') is-invalid @enderror" id="photo" name="photo">
-                        <img src="{{ asset('storage/images/'. $review->photo) }}" alt="" style="height: 200px">
+                        <img src="{{ asset('storage/images/'. $review->book->photo) }}" alt="" style="height: 200px">
                     </div>
 
                     @error('photo')
