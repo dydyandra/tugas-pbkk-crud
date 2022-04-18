@@ -46,5 +46,7 @@ Route::group(['prefix' => 'review', 'as' => 'review.'], function(){
 Route::group(['prefix' => 'book', 'as' => 'book.'], function(){
     Route::get('/', [BookController::class, 'index'])->name('list-buku');
     Route::get('/detail/{id}', [BookController::class, 'show'])->name('show');
+    Route::get('/edit/{id}', [BookController::class, 'edit'])->name('edit');
+    Route::post('/update/{id}', [BookController::class, 'update'])->name('update');
 
 });

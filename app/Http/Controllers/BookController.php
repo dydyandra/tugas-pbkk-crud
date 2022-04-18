@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 use App\Models\Book;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class BookController extends Controller
 {
@@ -65,7 +67,10 @@ class BookController extends Controller
      */
     public function edit($id)
     {
-        //
+        $book = Book::where('id', $id)->first();
+        return view('edit-buku', [
+            'book' => $book
+        ]);
     }
 
     /**
@@ -77,7 +82,52 @@ class BookController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $request->validate([
+            'title' => 'required|max:255',
+            'photo' => 'image',
+            'author' => 'required|max:50',
+        ]);
+
+        $book = Book::findOrFail($id);
+
+        if($request->hasFile('photo')){
+            $request->validate([
+                'photo' => 'image',
+            ]);
+
+            if ($book->photo != 'noimage.jpg'){
+                Storage::disk('public')->delete('images/'.$book->photo);
+            }
+            
+            $filenameWithExt = $request->file('photo')->getClientOriginalName ();
+            // Get Filename
+            $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
+            // Get just Extension
+            $extension = $request->file('photo')->getClientOriginalExtension();
+            // Filename To store
+            $fileNameToStore = $filename. '_'. time().'.'.$extension;
+            // Upload Image
+            $path = $request->file('photo')->storeAs('public/images', $fileNameToStore);
+
+                $book->update([
+                    'title' => $request['title'],
+                    'author' => $request['author'],
+                    'photo' => $fileNameToStore,
+                ]);
+
+            }
+        else{
+
+                $book->update([
+                    'title' => $request['title'],
+                    'author' => $request['author'],
+                ]);
+    
+
+            }
+            
+        
+        return redirect()->route('book.list-buku')->with('edit_review', 'Pengeditan Data berhasil!');
     }
 
     /**

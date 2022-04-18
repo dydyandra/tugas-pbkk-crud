@@ -72,7 +72,7 @@
         <tr>
             <td>{{ $it }}</td>
             <td>
-                <img src="{{ asset('storage/images/'. $d->book->photo) }}" alt="" style="height: 100px; width:100px">
+                <img src="{{ asset('storage/images/'. $d->book->photo) }}" alt="" style="height: 100px; width:75px">
                 {{-- {{ $d->photo }} --}}
             </td>
             <td>

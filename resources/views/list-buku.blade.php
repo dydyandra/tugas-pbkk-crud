@@ -37,6 +37,7 @@
             <td>{{ $d->title }}</td>
             <td>{{ $d->author }}</td>
             <td>
+                <a href="{{ Route('book.edit', $d->id) }}" class="btn btn-purple shadow"><i class="fa fa-edit"></i> Edit</a>
                 <a href="{{ route('book.show' , $d->id) }}" class="btn btn-secondary shadow"><i class="fa fa-info-circle"></i> Detail</a>
             </td>
         </tr>

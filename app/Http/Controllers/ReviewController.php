@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Models\Review;
 use App\Models\Book;
 use Illuminate\Http\Request;
@@ -20,11 +21,10 @@ class ReviewController extends Controller
         $read_count = Review::where('read', '!=', 0)->count();
         $progress = Review::where('read', '=', null)->count();
         return view('list-review', [
-            'review'=>$review, 
-            'showRead'=>$read_count,
-            'showProgress'=>$progress,
+            'review' => $review,
+            'showRead' => $read_count,
+            'showProgress' => $progress,
         ]);
-
     }
 
     /**
@@ -34,7 +34,11 @@ class ReviewController extends Controller
      */
     public function create()
     {
-        return view('create-review');
+        $title = Book::all();
+        // $author = Book::pluck('author', 'id');
+        return view('create-review', [
+            'title' => $title,
+        ]);
     }
 
     /**
@@ -54,30 +58,30 @@ class ReviewController extends Controller
         ]);
 
         if ($request->hasFile('photo')) {
-            $filenameWithExt = $request->file('photo')->getClientOriginalName ();
+            $filenameWithExt = $request->file('photo')->getClientOriginalName();
             // Get Filename
             $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
             // Get just Extension
             $extension = $request->file('photo')->getClientOriginalExtension();
             // Filename To store
-            $fileNameToStore = $filename. '_'. time().'.'.$extension;
+            $fileNameToStore = $filename . '_' . time() . '.' . $extension;
             // Upload Image
             $path = $request->file('photo')->storeAs('public/images', $fileNameToStore);
-            }
-            // Else add a dummy image
-            else {
+        }
+        // Else add a dummy image
+        else {
             $fileNameToStore = 'noimage.jpg';
         }
 
         // $path = $request->file('photo')->store('public/images');
-        $book= Book::where('title', '=', Str::lower($request->title) )->first();
+        $book = Book::where('title', '=', Str::lower($request->title))->first();
         if ($book === null) {
-           // book doesn't exist
-           $book = new Book;
-           $book->title = $request->title;
-           $book->author = $request->author;
-           $book->photo = $fileNameToStore;
-           $book->save();
+            // book doesn't exist
+            $book = new Book;
+            $book->title = $request->title;
+            $book->author = $request->author;
+            $book->photo = $fileNameToStore;
+            $book->save();
         }
 
         $review = new Review;
@@ -145,51 +149,49 @@ class ReviewController extends Controller
         $book = Book::find($review->book_id);
 
 
-        if($request->hasFile('photo')){
+        if ($request->hasFile('photo')) {
             $request->validate([
                 'photo' => 'image',
             ]);
 
-            if ($book->photo != 'noimage.jpg'){
-                Storage::disk('public')->delete('images/'.$book->photo);
+            if ($book->photo != 'noimage.jpg') {
+                Storage::disk('public')->delete('images/' . $book->photo);
             }
-            
-            $filenameWithExt = $request->file('photo')->getClientOriginalName ();
+
+            $filenameWithExt = $request->file('photo')->getClientOriginalName();
             // Get Filename
             $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
             // Get just Extension
             $extension = $request->file('photo')->getClientOriginalExtension();
             // Filename To store
-            $fileNameToStore = $filename. '_'. time().'.'.$extension;
+            $fileNameToStore = $filename . '_' . time() . '.' . $extension;
             // Upload Image
             $path = $request->file('photo')->storeAs('public/images', $fileNameToStore);
 
-            if ($request->title != $book->title){
+            if ($request->title != $book->title) {
                 // $fileNameToStore = 'noimage.jpg';
-                $findBook= Book::where('title', '=', Str::lower($request->title) )->first();
+                $findBook = Book::where('title', '=', Str::lower($request->title))->first();
                 if ($findBook === null) {
-                   // book doesn't exist
-                   $findBook = new Book;
-                   $findBook->title = $request->title;
-                   $findBook->author = $request->author;
-                   $findBook->photo = $fileNameToStore;
-                   $findBook->save();
+                    // book doesn't exist
+                    $findBook = new Book;
+                    $findBook->title = $request->title;
+                    $findBook->author = $request->author;
+                    $findBook->photo = $fileNameToStore;
+                    $findBook->save();
                 }
 
                 $review->update([
-                    'book_id' =>$findBook->id,
+                    'book_id' => $findBook->id,
                     'started' => $request['started'],
                     'read' => $request['read'],
                     'rating' => $request['rating'],
                 ]);
-
-            }
-            else{
+            } else {
                 $book->update([
                     'author' => $request['author'],
                     'photo' => $fileNameToStore,
                 ]);
-              
+
                 $review->update([
                     // 'book_id' => $request['book_id'],
                     'started' => $request['started'],
@@ -197,47 +199,40 @@ class ReviewController extends Controller
                     'rating' => $request['rating'],
                 ]);
             }
+        } else {
 
-        }
-    
-        else{
-
-            if($request->title != $book->title){
+            if ($request->title != $book->title) {
                 $fileNameToStore = 'noimage.jpg';
-                $findBook= Book::where('title', '=', Str::lower($request->title) )->first();
+                $findBook = Book::where('title', '=', Str::lower($request->title))->first();
                 if ($findBook === null) {
-                   // book doesn't exist
-                   $findBook = new Book;
-                   $findBook->title = $request->title;
-                   $findBook->author = $request->author;
-                   $findBook->photo = $fileNameToStore;
-                   $findBook->save();
+                    // book doesn't exist
+                    $findBook = new Book;
+                    $findBook->title = $request->title;
+                    $findBook->author = $request->author;
+                    $findBook->photo = $fileNameToStore;
+                    $findBook->save();
                 }
 
                 $review->update([
-                    'book_id' =>$findBook->id,
+                    'book_id' => $findBook->id,
                     'started' => $request['started'],
                     'read' => $request['read'],
                     'rating' => $request['rating'],
                 ]);
-
-            }
-            else{
+            } else {
                 $book->update([
                     'author' => $request['author'],
                 ]);
-    
+
                 $review->update([
                     // 'book_id' => $request['book_id'],
                     'started' => $request['started'],
                     'read' => $request['read'],
                     'rating' => $request['rating'],
                 ]);
-
             }
-            
         }
-        
+
         return redirect()->route('review.list-review')->with('edit_review', 'Pengeditan Data berhasil!');
     }
 
@@ -254,6 +249,7 @@ class ReviewController extends Controller
         //     Storage::disk('public')->delete('images/'.$review->photo);
         // }
         $review->delete();
-		return redirect()->route('review.list-review')->with('hapus_review', 'Penghapusan data berhasil');
+        return redirect()->route('review.list-review')->with('hapus_review', 'Penghapusan data berhasil');
     }
+
 }
