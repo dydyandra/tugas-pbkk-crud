@@ -18,7 +18,7 @@ class ReviewController extends Controller
     {
         $review = Review::all();
         $read_count = Review::where('read', '!=', 0)->count();
-        $progress = Review::where('read', '=', 0)->count();
+        $progress = Review::where('read', '=', null)->count();
         return view('list-review', [
             'review'=>$review, 
             'showRead'=>$read_count,
